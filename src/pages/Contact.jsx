@@ -1,7 +1,7 @@
 // src/pages/Contact.jsx
 
-import React, { useState, useEffect } from 'react'; // <<-- useEffect ko import karein
-import SupportModal from '../components/SupportModal'; // <<-- Path check kar lein
+import React, { useState, useEffect } from 'react'; 
+import SupportModal from '../components/SupportModal'; 
 
 const Contact = () => {
   // Modal ki state by default false rakhein
@@ -11,12 +11,11 @@ const Contact = () => {
   useEffect(() => {
     // Component ke pehli baar render hone par, modal ko open kar dein
     setModalOpen(true);
-  }, []); // <<-- Khali array ka matlab hai ki yeh effect sirf ek baar (component mount hone par) chalega
+  }, []); 
 
   return (
     <>
      
-
       {/* Modal component ko yahan render karein */}
       <SupportModal 
         isOpen={isModalOpen} 
