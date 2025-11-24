@@ -710,10 +710,12 @@ export default function Register() {
                 <div className="flex items-center gap-2 bg-[#1A1A1A] border border-gray-700 rounded-lg p-2">
                   <canvas
                     ref={canvasRef}
-                    width="120"
+                    width="135"
                     height="40"
-                    className="rounded"
+                    className="rounded cursor-pointer"
+                    onClick={generateCaptcha}
                   />
+
                   <button
                     type="button"
                     onClick={generateCaptcha}
