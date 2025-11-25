@@ -1,162 +1,257 @@
-import { useState } from 'react';
+import { useState } from "react";
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiArrowLeft,
+  FiMenu,
+} from "react-icons/fi";
 
-export default function StartSection() {
-  const [activeTab, setActiveTab] = useState('Start');
+export default function FAQSection() {
+  // --- States ---
+  const [activeTab, setActiveTab] = useState("Start"); // For Desktop
+  const [openCategoryMobile, setOpenCategoryMobile] = useState(null); // For Mobile Category (Start, Brands...)
+  const [openQuestion, setOpenQuestion] = useState(null); // For Questions inside categories
 
-  const tabContent = {
-    'Start': {
-      title: 'How to Start?',
-      content: 'The first stage starts with minimum balance of $100',
-      type: 'text'
-    },
-    'Brands': {
-      title: 'Brands Information',
-      content: 'Learn about our brand partnerships and collaborations',
-      type: 'text'
-    },
-    'Withdraw': {
-      title: 'Withdrawal Process',
-      content: 'Step-by-step guide to withdraw your earnings safely',
-      type: 'text'
-    },
-    'Funds Security': {
-      title: 'Funds Security',
-      content: 'Your funds are protected with advanced security measures',
-      type: 'text'
-    },
-    'Account Security': {
-      title: 'Account Security',
-      content: 'Tips to keep your account secure and protected',
-      type: 'text'
-    },
-    'Working Hub': {
-      title: 'Working Hub',
-      content: 'Central workspace for all your projects and tasks',
-      type: 'text'
-    },
-    'How to Start?': {
-      title: 'How to Start?',
-      content: 'The first stage starts with minimum balance of $100',
-      type: 'text'
-    },
-    'Unlock and Stage': {
-      title: 'Unlock and Stage',
-      content: [
-        'Users are required to complete 2 stage per day',
-        'Users are able to unlock the second stage directly after completing the first stage but are restricted to unlock during the middle of the stage'
-      ],
-      type: 'list'
-    },
-    'Complete': {
-      title: 'Complete Tasks',
-      content: 'Finish your tasks and get rewarded for completed work',
-      type: 'text'
-    },
-    'Extension': {
-      title: 'Browser Extension',
-      content: 'Install our extension for enhanced functionality',
-      type: 'text'
-    },
-    'Important Notice': {
-      title: 'Important Notice',
-      content: 'Critical updates and announcements for all users',
-      type: 'text'
-    },
-    'Credit Score': {
-      title: 'Credit Score',
-      content: 'Understand and improve your credit rating system',
-      type: 'text'
+  const tabData = {
+    Start: [
+      {
+        question: "How to Start?",
+        answer: "The first stage starts with minimum balance of $100.",
+      },
+      {
+        question: "Unlock and Stage",
+        answer:
+          "Users are required to complete 2 stages per day. Users are able to unlock the second stage directly after completing the first stage.",
+      },
+      {
+        question: "Complete",
+        answer:
+          "Once the tasks are completed, the profit and principal will be returned to your account balance.",
+      },
+      {
+        question: "Extension",
+        answer:
+          "Please download the official browser extension to ensure smooth operation of the tasks.",
+      },
+      {
+        question: "Important Notice",
+        answer:
+          "Please do not trust any unofficial contacts. Only communicate through official customer service channels.",
+      },
+      {
+        question: "Credit Score",
+        answer:
+          "Your credit score determines your daily withdrawal limits and task availability.",
+      },
+    ],
+    Brands: [
+      {
+        question: "Brand Cooperation",
+        answer:
+          "We cooperate with major international brands to optimize their product data.",
+      },
+    ],
+    Withdraw: [
+      {
+        question: "Withdrawal Time",
+        answer: "Withdrawals are processed within 24 hours of the request.",
+      },
+      {
+        question: "Minimum Withdrawal",
+        answer: "The minimum withdrawal amount is $50.",
+      },
+    ],
+    "Funds Security": [
+      {
+        question: "Is my money safe?",
+        answer:
+          "Yes, we use advanced encryption to ensure your funds are secure.",
+      },
+    ],
+    "Account Security": [
+      {
+        question: "Change Password",
+        answer:
+          "You can change your password in the Profile > Security Settings section.",
+      },
+    ],
+    "Working Hub": [
+      {
+        question: "Daily Tasks",
+        answer: "Check here for your daily assigned tasks and progress.",
+      },
+    ],
+  };
+
+  // --- Functions ---
+
+  // Desktop: Tab Change
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+    setOpenQuestion(null);
+  };
+
+  // Mobile: Toggle Main Category (Start, Brands, etc.)
+  const toggleMobileCategory = (category) => {
+    if (openCategoryMobile === category) {
+      setOpenCategoryMobile(null); // Close if already open
+    } else {
+      setOpenCategoryMobile(category); // Open new
+      setOpenQuestion(null); // Reset inner questions
     }
   };
 
-  const renderContent = () => {
-    const currentContent = tabContent[activeTab];
-    
-    if (!currentContent) return null;
-
-    if (currentContent.type === 'list') {
-      return (
-        <ul className="text-gray-300 space-y-4">
-          {currentContent.content.map((item, index) => (
-            <li key={index} className="flex items-start">
-              <span className="text-blue-400 mr-3">•</span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      );
-    }
-
-    return (
-      <p className="text-gray-300 text-lg leading-relaxed">
-        {currentContent.content}
-      </p>
-    );
+  // Both: Toggle Question (Inside the category)
+  const toggleQuestion = (index) => {
+    setOpenQuestion(openQuestion === index ? null : index);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 font-sans">
-      <div className="max-w-4xl mx-auto pt-20">
-        
-        {/* Horizontal Navigation - Clickable Tabs */}
-        <div className="flex flex-wrap gap-4 mb-12 border-b border-gray-800 pb-4">
-          {Object.keys(tabContent).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`text-lg font-medium pb-1 transition-colors ${
-                activeTab === tab 
-                  ? 'text-blue-400 border-b-2 border-blue-400' 
-                  : 'text-gray-400 hover:text-white'
-              }`}
+    <div className="min-h-screen bg-black text-white font-sans">
+      {/* ================= HEADER (Matches Screenshot) ================= */}
+      <div className="flex items-center justify-between p-4 md:pt-10 md:px-10 max-w-6xl mx-auto">
+        {/* Back Icon (Mobile only logic typically, strictly visual here) */}
+        <button className="text-white md:hidden">
+          <FiArrowLeft size={24} />
+        </button>
+
+        {/* Title */}
+        <h1 className="text-xl md:text-5xl mt-10 font-serif font-bold text-white mx-auto text-center w-full">
+          FAQ
+        </h1>
+
+        {/* Menu Icon (Mobile only) */}
+      </div>
+
+      {/* ================= MOBILE VIEW (Visible < md) ================= */}
+      <div className="md:hidden px-4 mt-6">
+        <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden">
+          {Object.keys(tabData).map((category) => (
+            <div
+              key={category}
+              className="border-b border-gray-800 last:border-none"
             >
-              {tab}
-            </button>
+              {/* Category Header (Start, Brands, etc.) */}
+              <button
+                onClick={() => toggleMobileCategory(category)}
+                className="w-full flex justify-between items-center p-5 text-left"
+              >
+                <span className="text-gray-200 font-medium text-lg">
+                  {category}
+                </span>
+                <span className="text-gray-400">
+                  {openCategoryMobile === category ? (
+                    <FiChevronUp />
+                  ) : (
+                    <FiChevronDown />
+                  )}
+                </span>
+              </button>
+
+              {/* Inner Content (Questions List) - Opens when Category clicked */}
+              <div
+                className={`bg-black/30 transition-all duration-300 ease-in-out ${
+                  openCategoryMobile === category
+                    ? "max-h-[1000px] opacity-100"
+                    : "max-h-0 opacity-0 overflow-hidden"
+                }`}
+              >
+                <div className="px-5 pb-4">
+                  {tabData[category].map((item, index) => (
+                    <div
+                      key={index}
+                      className="py-3 border-b border-gray-800/50 last:border-0"
+                    >
+                      {/* Question */}
+                      <button
+                        onClick={() => toggleQuestion(index)}
+                        className="w-full text-left text-sm font-bold text-gray-300 mb-1 flex justify-between"
+                      >
+                        {item.question}
+                        {openCategoryMobile === category &&
+                          openQuestion === index && (
+                            <span className="text-[#E83A78] text-xs">●</span>
+                          )}
+                      </button>
+
+                      {/* Answer */}
+                      {openQuestion === index && (
+                        <p className="text-gray-400 text-sm mt-2 leading-relaxed animate-fadeIn">
+                          {item.answer}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
+      </div>
 
-        {/* Dynamic Content Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
-          {/* Left Side - Main Content */}
-          <div>
-            <h2 className="text-2xl font-bold mb-6">
-              {tabContent[activeTab]?.title}
-            </h2>
-            <div className="bg-gray-900 rounded-lg p-6">
-              {renderContent()}
+      {/* ================= DESKTOP VIEW (Visible >= md) ================= */}
+      <div className="hidden md:flex flex-col items-center w-full px-4">
+        {/* Desktop Container */}
+        <div className="w-full max-w-6xl bg-[#111111] rounded-[30px] p-10 mt-8">
+          {/* Horizontal Tabs */}
+          <div className="overflow-x-auto pb-4 mb-8   custom-scrollbar">
+            <div className="flex gap-25 min-w-max">
+              {Object.keys(tabData).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => handleTabChange(tab)}
+                  className={`text-lg font-bold pb-2 transition-all duration-300 relative whitespace-nowrap ${
+                    activeTab === tab
+                      ? "text-[#E83A78]"
+                      : "text-white hover:text-gray-300"
+                  }`}
+                >
+                  {tab}
+                  {activeTab === tab && (
+                    <span className="absolute bottom-0 left-0 w-8 h-1 bg-[#E83A78] rounded-full"></span>
+                  )}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Right Side - Additional Info (for some tabs) */}
-          <div>
-            <h2 className="text-2xl font-bold mb-6">
-              {activeTab === 'Unlock and Stage' ? 'Stage Rules' : 'Additional Information'}
-            </h2>
-            <div className="bg-gray-900 rounded-lg p-6">
-              {activeTab === 'Unlock and Stage' ? (
-                <ul className="text-gray-300 space-y-4">
-                  <li className="flex items-start">
-                    <span className="text-blue-400 mr-3">•</span>
-                    <span>Maximum 2 stages allowed per 24 hours</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-blue-400 mr-3">•</span>
-                    <span>Stage completion time: 4-6 hours each</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-blue-400 mr-3">•</span>
-                    <span>Rewards are credited after stage verification</span>
-                  </li>
-                </ul>
-              ) : (
-                <p className="text-gray-300 leading-relaxed">
-                  Click on different tabs to explore more information about each section. Each tab contains specific details and guidelines.
-                </p>
-              )}
-            </div>
-          </div>
+          {/* Content Area */}
+          <div className="w-full">
+            {tabData[activeTab].map((item, index) => (
+              <div
+                key={index}
+                className="border-b border-gray-800 last:border-0"
+              >
+                <button
+                  onClick={() => toggleQuestion(index)}
+                  className="w-full text-left py-6 flex justify-between items-center group"
+                >
+                  <span className="text-xl font-bold text-white">
+                    {item.question}
+                  </span>
+                  <span
+                    className={`transform transition-transform duration-300 text-gray-400 ${
+                      openQuestion === index ? "rotate-180" : ""
+                    }`}
+                  >
+                    <FiChevronDown size={24} />
+                  </span>
+                </button>
 
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    openQuestion === index
+                      ? "max-h-40 opacity-100 mb-6"
+                      : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <p className="text-[#64748B] text-lg font-medium leading-relaxed">
+                    {item.answer}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

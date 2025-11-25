@@ -14,6 +14,10 @@ export default function Profile() {
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
   const [isWithdrawalVerified, setIsWithdrawalVerified] = useState(false);
+  
+  // New state to track where to go after password verification
+  const [targetTab, setTargetTab] = useState(""); 
+
   const [loginPasswords, setLoginPasswords] = useState({
     old: "",
     new: "",
@@ -40,6 +44,13 @@ export default function Profile() {
     totalBrandsUploaded: 1,
   };
 
+  // Dummy data for Withdrawal Records
+  const withdrawalRecords = [
+    { id: 1, date: "2024-05-20", amount: "500.00", status: "Completed", network: "TRC20" },
+    { id: 2, date: "2024-05-18", amount: "1200.00", status: "Pending", network: "ERC20" },
+    { id: 3, date: "2024-05-10", amount: "350.00", status: "Rejected", network: "TRC20" },
+  ];
+
   // Show message function
   const showMessage = (text, type = "success") => {
     setMessage({ text, type });
@@ -53,9 +64,10 @@ export default function Profile() {
       walletAddress: "",
       networkType: "TRC20",
       withdrawalAmount: "",
-      withdrawalPassword: "", // This clears the password field
+      withdrawalPassword: "", 
     });
-    setIsWithdrawalVerified(false); // Reset verification
+    // We don't reset isWithdrawalVerified here anymore to allow tab switching if needed,
+    // but the logic below forces re-verification on menu click.
   };
 
   const handleLoginPasswordChange = (field, value) => {
@@ -87,184 +99,172 @@ export default function Profile() {
     }));
   };
 
-  // Change Login Password Function
+  // ... (Password Save Functions remain the same) ...
   const handleSaveLoginPassword = (e) => {
     e.preventDefault();
-
+    // ... (Login password logic unchanged)
     if (!loginPasswords.old || !loginPasswords.new || !loginPasswords.confirm) {
-      showMessage("Please fill all fields", "error");
-      return;
-    }
-
-    if (loginPasswords.new !== loginPasswords.confirm) {
-      showMessage("New passwords do not match", "error");
-      return;
-    }
-
-    if (loginPasswords.new.length < 6) {
-      showMessage("Password must be at least 6 characters long", "error");
-      return;
-    }
-
-    const currentPassword = localStorage.getItem("userPassword");
-
-    if (loginPasswords.old !== currentPassword) {
-      showMessage("Old password is incorrect", "error");
-      return;
-    }
-
-    const registeredUsers = JSON.parse(
-      localStorage.getItem("registeredUsers") || "[]"
-    );
-    const currentUsername = localStorage.getItem("username");
-
-    const updatedUsers = registeredUsers.map((user) => {
-      if (user.username === currentUsername) {
-        return { ...user, password: loginPasswords.new };
+        showMessage("Please fill all fields", "error");
+        return;
       }
-      return user;
-    });
-
-    localStorage.setItem("registeredUsers", JSON.stringify(updatedUsers));
-    localStorage.setItem("userPassword", loginPasswords.new);
-
-    setLoginPasswords({ old: "", new: "", confirm: "" });
-
-    showMessage("Login password updated successfully!");
+  
+      if (loginPasswords.new !== loginPasswords.confirm) {
+        showMessage("New passwords do not match", "error");
+        return;
+      }
+  
+      if (loginPasswords.new.length < 6) {
+        showMessage("Password must be at least 6 characters long", "error");
+        return;
+      }
+  
+      const currentPassword = localStorage.getItem("userPassword");
+  
+      if (loginPasswords.old !== currentPassword) {
+        showMessage("Old password is incorrect", "error");
+        return;
+      }
+  
+      const registeredUsers = JSON.parse(
+        localStorage.getItem("registeredUsers") || "[]"
+      );
+      const currentUsername = localStorage.getItem("username");
+  
+      const updatedUsers = registeredUsers.map((user) => {
+        if (user.username === currentUsername) {
+          return { ...user, password: loginPasswords.new };
+        }
+        return user;
+      });
+  
+      localStorage.setItem("registeredUsers", JSON.stringify(updatedUsers));
+      localStorage.setItem("userPassword", loginPasswords.new);
+  
+      setLoginPasswords({ old: "", new: "", confirm: "" });
+  
+      showMessage("Login password updated successfully!");
   };
 
-  // Change Withdraw Password Function
   const handleSaveWithdrawPassword = (e) => {
     e.preventDefault();
-
+    // ... (Withdraw password logic unchanged)
     if (
-      !withdrawPasswords.old ||
-      !withdrawPasswords.new ||
-      !withdrawPasswords.confirm
-    ) {
-      showMessage("Please fill all fields", "error");
-      return;
-    }
-
-    if (withdrawPasswords.new !== withdrawPasswords.confirm) {
-      showMessage("New passwords do not match", "error");
-      return;
-    }
-
-    if (withdrawPasswords.new.length < 6) {
-      showMessage("Password must be at least 6 characters long", "error");
-      return;
-    }
-
-    const currentWithdrawPassword = localStorage.getItem("withdrawPassword");
-
-    if (withdrawPasswords.old !== currentWithdrawPassword) {
-      showMessage("Old withdraw password is incorrect", "error");
-      return;
-    }
-
-    const loginPassword = localStorage.getItem("userPassword");
-    if (withdrawPasswords.new === loginPassword) {
-      showMessage(
-        "Withdraw password cannot be same as login password",
-        "error"
-      );
-      return;
-    }
-
-    const registeredUsers = JSON.parse(
-      localStorage.getItem("registeredUsers") || "[]"
-    );
-    const currentUsername = localStorage.getItem("username");
-
-    const updatedUsers = registeredUsers.map((user) => {
-      if (user.username === currentUsername) {
-        return { ...user, withdrawPassword: withdrawPasswords.new };
+        !withdrawPasswords.old ||
+        !withdrawPasswords.new ||
+        !withdrawPasswords.confirm
+      ) {
+        showMessage("Please fill all fields", "error");
+        return;
       }
-      return user;
-    });
-
-    localStorage.setItem("registeredUsers", JSON.stringify(updatedUsers));
-    localStorage.setItem("withdrawPassword", withdrawPasswords.new);
-
-    setWithdrawPasswords({ old: "", new: "", confirm: "" });
-
-    showMessage("Withdraw password updated successfully!");
+  
+      if (withdrawPasswords.new !== withdrawPasswords.confirm) {
+        showMessage("New passwords do not match", "error");
+        return;
+      }
+  
+      if (withdrawPasswords.new.length < 6) {
+        showMessage("Password must be at least 6 characters long", "error");
+        return;
+      }
+  
+      const currentWithdrawPassword = localStorage.getItem("withdrawPassword");
+  
+      if (withdrawPasswords.old !== currentWithdrawPassword) {
+        showMessage("Old withdraw password is incorrect", "error");
+        return;
+      }
+  
+      const loginPassword = localStorage.getItem("userPassword");
+      if (withdrawPasswords.new === loginPassword) {
+        showMessage(
+          "Withdraw password cannot be same as login password",
+          "error"
+        );
+        return;
+      }
+  
+      const registeredUsers = JSON.parse(
+        localStorage.getItem("registeredUsers") || "[]"
+      );
+      const currentUsername = localStorage.getItem("username");
+  
+      const updatedUsers = registeredUsers.map((user) => {
+        if (user.username === currentUsername) {
+          return { ...user, withdrawPassword: withdrawPasswords.new };
+        }
+        return user;
+      });
+  
+      localStorage.setItem("registeredUsers", JSON.stringify(updatedUsers));
+      localStorage.setItem("withdrawPassword", withdrawPasswords.new);
+  
+      setWithdrawPasswords({ old: "", new: "", confirm: "" });
+  
+      showMessage("Withdraw password updated successfully!");
   };
 
-  // Handle withdrawal form submission
   const handleWithdrawalSubmit = (e) => {
     e.preventDefault();
-
+    // ... (Withdrawal submit logic unchanged)
     if (
-      !withdrawalData.fullName ||
-      !withdrawalData.walletAddress ||
-      !withdrawalData.withdrawalAmount ||
-      !withdrawalData.withdrawalPassword
-    ) {
-      showMessage("Please fill all fields", "error");
-      return;
-    }
-
-    // Verify withdrawal password
-    const currentWithdrawPassword = localStorage.getItem("withdrawPassword");
-    if (withdrawalData.withdrawalPassword !== currentWithdrawPassword) {
-      showMessage("Invalid withdrawal password", "error");
-      return;
-    }
-
-    // Process withdrawal
-    showMessage(
-      "Withdrawal request submitted successfully! Please contact customer service for confirmation."
-    );
-
-    // Reset form after successful submission
-    resetWithdrawalForm();
-
-    console.log("Withdrawal Data:", withdrawalData);
+        !withdrawalData.fullName ||
+        !withdrawalData.walletAddress ||
+        !withdrawalData.withdrawalAmount ||
+        !withdrawalData.withdrawalPassword
+      ) {
+        showMessage("Please fill all fields", "error");
+        return;
+      }
+  
+      // Verify withdrawal password
+      const currentWithdrawPassword = localStorage.getItem("withdrawPassword");
+      if (withdrawalData.withdrawalPassword !== currentWithdrawPassword) {
+        showMessage("Invalid withdrawal password", "error");
+        return;
+      }
+  
+      // Process withdrawal
+      showMessage(
+        "Withdrawal request submitted successfully! Please contact customer service for confirmation."
+      );
+  
+      // Reset form after successful submission
+      resetWithdrawalForm();
+  
+      console.log("Withdrawal Data:", withdrawalData);
   };
 
-  // Open Support Modal
-  const openSupportModal = () => {
-    setShowSupportModal(true);
-  };
+  const openSupportModal = () => setShowSupportModal(true);
+  const closeSupportModal = () => setShowSupportModal(false);
 
-  // Close Support Modal
-  const closeSupportModal = () => {
-    setShowSupportModal(false);
-  };
-
-  // Handle Withdrawal icon click - UPDATED
-  const handleWithdrawalClick = () => {
-    // Reset form every time withdrawal icon is clicked
+  // --- UPDATED: Handle Restricted Access (Withdrawal & Record) ---
+  const handleRestrictedAccess = (target) => {
+    // Reset form
     resetWithdrawalForm();
     
-    // Reset verification state har baar
+    // Always require verification when clicking the sidebar buttons
     setIsWithdrawalVerified(false);
-
-    if (!isWithdrawalVerified) {
-      // First time - open password modal
-      setShowWithdrawalModal(true);
-    } else {
-      // Already verified - show withdrawal form
-      setActiveTab("withdrawal");
-    }
+    
+    // Set where we want to go
+    setTargetTab(target);
+    
+    // Open password modal
+    setShowWithdrawalModal(true);
   };
 
-  // Close Withdrawal Modal and set verified - UPDATED
+  // --- UPDATED: Close Withdrawal Modal ---
   const closeWithdrawalModal = (passwordVerified = false) => {
     setShowWithdrawalModal(false);
+    
     if (passwordVerified) {
       setIsWithdrawalVerified(true);
-      setActiveTab("withdrawal"); // Automatically show withdrawal form
+      setActiveTab(targetTab); // Navigate to the target tab (withdrawal or withdrawal-record)
     }
-    // Har baar verification reset nahi karenge, sirf passwordVerified true hone par set karenge
   };
 
-  // Handle tab change
   const handleTabChange = (tab) => {
-    if (tab !== "withdrawal") {
-      resetWithdrawalForm(); // Reset form when leaving withdrawal tab
+    if (tab !== "withdrawal" && tab !== "withdrawal-record") {
+      resetWithdrawalForm();
     }
     setActiveTab(tab);
   };
@@ -273,8 +273,9 @@ export default function Profile() {
     switch (activeTab) {
       case "personal":
         return (
+          // ... (Personal content unchanged)
           <>
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold  text-white">
               Personal information
             </h1>
             <p className="text-gray-400 mt-1">
@@ -282,23 +283,23 @@ export default function Profile() {
               relevant security information.
             </p>
 
-            <div className="my-8 bg-[#E83A78] rounded-xl p-4 flex items-center justify-between">
+            <div className="my-8 bg-[#E83A78] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                <div className="w-12 h-12 bg-gray-700  rounded-full flex items-center justify-center text-white font-bold text-lg">
                   {userInfo.username}
                 </div>
                 <span className="text-white font-semibold">
                   {userInfo.username}
                 </span>
               </div>
-              <button className="bg-white text-[#E83A78] font-bold py-2 px-6 rounded-lg">
+              <button className="bg-white text-[#E83A78] font-bold py-2 px-6 rounded-lg w-full sm:w-auto">
                 Change
               </button>
             </div>
 
             <div>
               <h2 className="text-xl font-bold text-white mb-4">User Info</h2>
-              <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-gray-300">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-gray-300">
                 <div className="flex justify-between">
                   <span>Username</span>
                   <span className="text-white">{userInfo.username}</span>
@@ -323,338 +324,391 @@ export default function Profile() {
         );
 
       case "security":
+        // ... (Security content unchanged)
         return (
-          <div className="space-y-8">
-            {message.text && (
-              <div
-                className={`p-4 rounded-lg ${
-                  message.type === "error"
-                    ? "bg-red-500 text-white"
-                    : "bg-green-500 text-white"
-                }`}
-              >
-                {message.text}
+            <div className="space-y-8">
+              {message.text && (
+                <div
+                  className={`p-4 rounded-lg ${
+                    message.type === "error"
+                      ? "bg-red-500 text-white"
+                      : "bg-green-500 text-white"
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
+  
+              <div>
+                <h1 className="text-2xl font-bold text-white mb-2">
+                  Account Settings
+                </h1>
               </div>
-            )}
-
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-2">
-                Account Settings
-              </h1>
+  
+              {/* Update Login Password Section */}
+              <div className="bg-[#2C2C2E] rounded-xl p-6">
+                <h2 className="text-xl font-bold text-white mb-4">
+                  Update Login Password
+                </h2>
+                <p className="text-gray-400 mb-6">
+                  Complete the fields below to change your login password, you
+                  will need to enter your current password first. We recommend
+                  including both uppercase and lowercase characters, special
+                  characters and numbers.
+                </p>
+  
+                <form onSubmit={handleSaveLoginPassword} className="space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        Old Login Password
+                      </label>
+                      <input
+                        type="password"
+                        value={loginPasswords.old}
+                        onChange={(e) =>
+                          handleLoginPasswordChange("old", e.target.value)
+                        }
+                        className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                        placeholder="Enter old password"
+                      />
+                    </div>
+  
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        New Login Password
+                      </label>
+                      <input
+                        type="password"
+                        value={loginPasswords.new}
+                        onChange={(e) =>
+                          handleLoginPasswordChange("new", e.target.value)
+                        }
+                        className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                        placeholder="Enter new password"
+                      />
+                    </div>
+  
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        Confirm New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={loginPasswords.confirm}
+                        onChange={(e) =>
+                          handleLoginPasswordChange("confirm", e.target.value)
+                        }
+                        className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                        placeholder="Confirm new password"
+                      />
+                    </div>
+                  </div>
+  
+                  <div className="border-t border-gray-700 my-6"></div>
+  
+                  <button
+                    type="submit"
+                    className="bg-[#E83A78] text-white font-bold py-3 px-8 rounded-lg hover:bg-pink-700 transition-colors w-full md:w-auto"
+                  >
+                    Save update
+                  </button>
+                </form>
+              </div>
+  
+              {/* Update Withdraw Password Section */}
+              <div className="bg-[#2C2C2E] rounded-xl p-6">
+                <h2 className="text-xl font-bold text-white mb-4">
+                  Update Withdraw Password
+                </h2>
+                <p className="text-gray-400 mb-6">
+                  Your Withdraw Password should not be the same as login password.
+                  It is two-layer verification while requesting the withdrawal
+                  from the portal.
+                </p>
+  
+                <form onSubmit={handleSaveWithdrawPassword} className="space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        Old Withdraw Password
+                      </label>
+                      <input
+                        type="password"
+                        value={withdrawPasswords.old}
+                        onChange={(e) =>
+                          handleWithdrawPasswordChange("old", e.target.value)
+                        }
+                        className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                        placeholder="Enter old password"
+                      />
+                    </div>
+  
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        New Withdraw Password
+                      </label>
+                      <input
+                        type="password"
+                        value={withdrawPasswords.new}
+                        onChange={(e) =>
+                          handleWithdrawPasswordChange("new", e.target.value)
+                        }
+                        className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                        placeholder="Enter new password"
+                      />
+                    </div>
+  
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        Confirm New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={withdrawPasswords.confirm}
+                        onChange={(e) =>
+                          handleWithdrawPasswordChange("confirm", e.target.value)
+                        }
+                        className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                        placeholder="Confirm new password"
+                      />
+                    </div>
+                  </div>
+  
+                  <div className="border-t border-gray-700 my-6"></div>
+  
+                  <button
+                    type="submit"
+                    className="bg-[#E83A78] text-white font-bold py-3 px-8 rounded-lg hover:bg-pink-700 transition-colors w-full md:w-auto"
+                  >
+                    Save update
+                  </button>
+                </form>
+              </div>
             </div>
-
-            {/* Update Login Password Section */}
-            <div className="bg-[#2C2C2E] rounded-xl p-6">
-              <h2 className="text-xl font-bold text-white mb-4">
-                Update Login Password
-              </h2>
-              <p className="text-gray-400 mb-6">
-                Complete the fields below to change your login password, you
-                will need to enter your current password first. We recommend
-                including both uppercase and lowercase characters, special
-                characters and numbers.
-              </p>
-
-              <form onSubmit={handleSaveLoginPassword} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      Old Login Password
-                    </label>
-                    <input
-                      type="password"
-                      value={loginPasswords.old}
-                      onChange={(e) =>
-                        handleLoginPasswordChange("old", e.target.value)
-                      }
-                      className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                      placeholder="Enter old password"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      New Login Password
-                    </label>
-                    <input
-                      type="password"
-                      value={loginPasswords.new}
-                      onChange={(e) =>
-                        handleLoginPasswordChange("new", e.target.value)
-                      }
-                      className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                      placeholder="Enter new password"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      Confirm New Password
-                    </label>
-                    <input
-                      type="password"
-                      value={loginPasswords.confirm}
-                      onChange={(e) =>
-                        handleLoginPasswordChange("confirm", e.target.value)
-                      }
-                      className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                      placeholder="Confirm new password"
-                    />
-                  </div>
-                </div>
-
-                <div className="border-t border-gray-700 my-6"></div>
-
-                <button
-                  type="submit"
-                  className="bg-[#E83A78] text-white font-bold py-3 px-8 rounded-lg hover:bg-pink-700 transition-colors"
-                >
-                  Save update
-                </button>
-              </form>
-            </div>
-
-            {/* Update Withdraw Password Section */}
-            <div className="bg-[#2C2C2E] rounded-xl p-6">
-              <h2 className="text-xl font-bold text-white mb-4">
-                Update Withdraw Password
-              </h2>
-              <p className="text-gray-400 mb-6">
-                Your Withdraw Password should not be the same as login password.
-                It is two-layer verification while requesting the withdrawal
-                from the portal.
-              </p>
-
-              <form onSubmit={handleSaveWithdrawPassword} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      Old Withdraw Password
-                    </label>
-                    <input
-                      type="password"
-                      value={withdrawPasswords.old}
-                      onChange={(e) =>
-                        handleWithdrawPasswordChange("old", e.target.value)
-                      }
-                      className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                      placeholder="Enter old password"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      New Withdraw Password
-                    </label>
-                    <input
-                      type="password"
-                      value={withdrawPasswords.new}
-                      onChange={(e) =>
-                        handleWithdrawPasswordChange("new", e.target.value)
-                      }
-                      className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                      placeholder="Enter new password"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      Confirm New Password
-                    </label>
-                    <input
-                      type="password"
-                      value={withdrawPasswords.confirm}
-                      onChange={(e) =>
-                        handleWithdrawPasswordChange("confirm", e.target.value)
-                      }
-                      className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                      placeholder="Confirm new password"
-                    />
-                  </div>
-                </div>
-
-                <div className="border-t border-gray-700 my-6"></div>
-
-                <button
-                  type="submit"
-                  className="bg-[#E83A78] text-white font-bold py-3 px-8 rounded-lg hover:bg-pink-700 transition-colors"
-                >
-                  Save update
-                </button>
-              </form>
-            </div>
-          </div>
-        );
+          );
 
       case "withdrawal":
+        // ... (Withdrawal form content unchanged)
         return (
-          <div className="space-y-6">
-            {/* Success/Error Message */}
-            {message.text && (
-              <div
-                className={`p-4 rounded-lg ${
-                  message.type === "error"
-                    ? "bg-red-500 text-white"
-                    : "bg-green-500 text-white"
-                }`}
-              >
-                {message.text}
-              </div>
-            )}
-
-            <h1 className="text-2xl font-bold text-white">Notice</h1>
-
-            {/* Notice */}
-            <div className=" bg-opacity-20  rounded-lg p-4">
-              <p className="text-gray-500 text-sm text-center">
-                Please contact customer service for confirmation after submitted
-                withdrawal request.
-              </p>
-            </div>
-
-            {/* Total Account Balance */}
-            <div className="bg-[#2C2C2E] rounded-xl p-6">
-              <h2 className="text-lg font-semibold mb-2 text-white">
-                Total Account Balance
-              </h2>
-              <div className="text-3xl font-bold text-[#E83A78]">
-                $ 32,148.46
-              </div>
-            </div>
-
-            {/* Withdrawal Form */}
-            <div className="bg-[#2C2C2E] rounded-xl p-6">
-              <h2 className="text-xl font-bold text-white mb-4">Withdraw</h2>
-
-              <form onSubmit={handleWithdrawalSubmit} className="space-y-6">
-                {/* Full Name & Wallet Address - 2 inputs in one line */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      value={withdrawalData.fullName}
-                      onChange={(e) =>
-                        handleWithdrawalInputChange("fullName", e.target.value)
-                      }
-                      className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                      placeholder="Please enter your Name"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      Wallet Address
-                    </label>
-                    <input
-                      type="text"
-                      value={withdrawalData.walletAddress}
-                      onChange={(e) =>
-                        handleWithdrawalInputChange(
-                          "walletAddress",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                      placeholder="PY"
-                    />
-                  </div>
+            <div className="space-y-6">
+              {/* Success/Error Message */}
+              {message.text && (
+                <div
+                  className={`p-4 rounded-lg ${
+                    message.type === "error"
+                      ? "bg-red-500 text-white"
+                      : "bg-green-500 text-white"
+                  }`}
+                >
+                  {message.text}
                 </div>
-
-                {/* Network Type */}
-                <div>
-                  <label className="block text-gray-300 mb-2 text-sm">
-                    Network Type
-                    </label>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleWithdrawalInputChange("networkType", "TRC20")
-                      }
-                      className={`flex-1 py-3 rounded-lg border ${
-                        withdrawalData.networkType === "TRC20"
-                          ? "bg-[#E83A78] border-[#E83A78] text-white"
-                          : "bg-[#1C1C1E] border-gray-600 text-gray-300"
-                      }`}
-                    >
-                      TRC20
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleWithdrawalInputChange("networkType", "ERC20")
-                      }
-                      className={`flex-1 py-3 rounded-lg border ${
-                        withdrawalData.networkType === "ERC20"
-                          ? "bg-[#E83A78] border-[#E83A78] text-white"
-                          : "bg-[#1C1C1E] border-gray-600 text-gray-300"
-                      }`}
-                    >
-                      ERC20
-                    </button>
-                  </div>
+              )}
+  
+              <h1 className="text-2xl font-bold text-white">Notice</h1>
+  
+              {/* Notice */}
+              <div className=" bg-opacity-20  rounded-lg p-4">
+                <p className="text-gray-500 text-sm text-center">
+                  Please contact customer service for confirmation after submitted
+                  withdrawal request.
+                </p>
+              </div>
+  
+              {/* Total Account Balance */}
+              <div className="bg-[#2C2C2E] rounded-xl p-6">
+                <h2 className="text-lg font-semibold mb-2 text-white">
+                  Total Account Balance
+                </h2>
+                <div className="text-3xl font-bold text-[#E83A78]">
+                  $ 32,148.46
                 </div>
-
-                {/* Withdrawal Amount & Password - 2 inputs in one line */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      Withdrawal Amount
-                    </label>
-                    <div className="flex gap-2">
+              </div>
+  
+              {/* Withdrawal Form */}
+              <div className="bg-[#2C2C2E] rounded-xl p-6">
+                <h2 className="text-xl font-bold text-white mb-4">Withdraw</h2>
+  
+                <form onSubmit={handleWithdrawalSubmit} className="space-y-6">
+                  {/* Full Name & Wallet Address - 2 inputs in one line */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        Full Name
+                      </label>
                       <input
-                        type="number"
-                        value={withdrawalData.withdrawalAmount}
+                        type="text"
+                        value={withdrawalData.fullName}
+                        onChange={(e) =>
+                          handleWithdrawalInputChange("fullName", e.target.value)
+                        }
+                        className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                        placeholder="Please enter your Name"
+                      />
+                    </div>
+  
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        Wallet Address
+                      </label>
+                      <input
+                        type="text"
+                        value={withdrawalData.walletAddress}
                         onChange={(e) =>
                           handleWithdrawalInputChange(
-                            "withdrawalAmount",
+                            "walletAddress",
                             e.target.value
                           )
                         }
-                        className="flex-1 bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                        placeholder="Please enter withdrawal amount"
+                        className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                        placeholder="PY"
                       />
+                    </div>
+                  </div>
+  
+                  {/* Network Type */}
+                  <div>
+                    <label className="block text-gray-300 mb-2 text-sm">
+                      Network Type
+                      </label>
+                    <div className="flex gap-2">
                       <button
                         type="button"
-                        onClick={handleSetMaxAmount}
-                        className="bg-[#E83A78] text-white font-bold py-3 px-4 rounded-lg hover:bg-pink-700 transition-colors"
+                        onClick={() =>
+                          handleWithdrawalInputChange("networkType", "TRC20")
+                        }
+                        className={`flex-1 py-3 rounded-lg border ${
+                          withdrawalData.networkType === "TRC20"
+                            ? "bg-[#E83A78] border-[#E83A78] text-white"
+                            : "bg-[#1C1C1E] border-gray-600 text-gray-300"
+                        }`}
                       >
-                        All
+                        TRC20
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleWithdrawalInputChange("networkType", "ERC20")
+                        }
+                        className={`flex-1 py-3 rounded-lg border ${
+                          withdrawalData.networkType === "ERC20"
+                            ? "bg-[#E83A78] border-[#E83A78] text-white"
+                            : "bg-[#1C1C1E] border-gray-600 text-gray-300"
+                        }`}
+                      >
+                        ERC20
                       </button>
                     </div>
                   </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2 text-sm">
-                      Withdrawal Password
-                    </label>
-                    <input
-                      type="password"
-                      value={withdrawalData.withdrawalPassword}
-                      onChange={(e) =>
-                        handleWithdrawalInputChange(
-                          "withdrawalPassword",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
-                      placeholder="Enter withdrawal password"
-                    />
+  
+                  {/* Withdrawal Amount & Password - 2 inputs in one line */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        Withdrawal Amount
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          value={withdrawalData.withdrawalAmount}
+                          onChange={(e) =>
+                            handleWithdrawalInputChange(
+                              "withdrawalAmount",
+                              e.target.value
+                            )
+                          }
+                          className="flex-1 bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                          placeholder="Please enter withdrawal amount"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleSetMaxAmount}
+                          className="bg-[#E83A78] text-white font-bold py-3 px-4 rounded-lg hover:bg-pink-700 transition-colors"
+                        >
+                          All
+                        </button>
+                      </div>
+                    </div>
+  
+                    <div>
+                      <label className="block text-gray-300 mb-2 text-sm">
+                        Withdrawal Password
+                      </label>
+                      <input
+                        type="password"
+                        value={withdrawalData.withdrawalPassword}
+                        onChange={(e) =>
+                          handleWithdrawalInputChange(
+                            "withdrawalPassword",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-[#1C1C1E] border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#E83A78]"
+                        placeholder="Enter withdrawal password"
+                      />
+                    </div>
                   </div>
-                </div>
+  
+                  <div className="border-t border-gray-700 my-6"></div>
+  
+                  <button
+                    type="submit"
+                    className="w-full bg-[#E83A78] text-white font-bold py-3 px-8 rounded-lg hover:bg-pink-700 transition-colors"
+                  >
+                    Submit Withdrawal
+                  </button>
+                </form>
+              </div>
+            </div>
+          );
 
-                <div className="border-t border-gray-700 my-6"></div>
+      // --- NEW VIEW: Withdrawal Record ---
+      case "withdrawal-record":
+        return (
+          <div className="space-y-6">
+            <h1 className="text-2xl font-bold text-white">Withdrawal Records</h1>
+            <p className="text-gray-400 mt-1">
+              Here is your recent withdrawal history.
+            </p>
 
-                <button
-                  type="submit"
-                  className="w-full bg-[#E83A78] text-white font-bold py-3 px-8 rounded-lg hover:bg-pink-700 transition-colors"
-                >
-                  Submit Withdrawal
-                </button>
-              </form>
+            <div className="bg-[#2C2C2E] rounded-xl p-6 overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-gray-700 text-gray-400">
+                    <th className="py-3 px-2">Date</th>
+                    <th className="py-3 px-2">Amount</th>
+                    <th className="py-3 px-2">Network</th>
+                    <th className="py-3 px-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {withdrawalRecords.map((record) => (
+                    <tr key={record.id} className="border-b border-gray-800 text-gray-300">
+                      <td className="py-3 px-2">{record.date}</td>
+                      <td className="py-3 px-2 text-[#E83A78] font-bold">${record.amount}</td>
+                      <td className="py-3 px-2">{record.network}</td>
+                      <td className="py-3 px-2">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            record.status === "Completed"
+                              ? "bg-green-500/20 text-green-500"
+                              : record.status === "Pending"
+                              ? "bg-yellow-500/20 text-yellow-500"
+                              : "bg-red-500/20 text-red-500"
+                          }`}
+                        >
+                          {record.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {withdrawalRecords.length === 0 && (
+                     <tr>
+                        <td colSpan="4" className="text-center py-6 text-gray-500">No records found</td>
+                     </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         );
@@ -665,10 +719,10 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex justify-center items-center p-4">
-      <div className="w-full max-w-6xl flex gap-8">
+    <div className="min-h-screen bg-black flex justify-center items-start md:items-center p-4 overflow-y-auto">
+      <div className="w-full max-w-6xl flex flex-col md:flex-row gap-4 md:gap-8">
         {/* Left Sidebar */}
-        <aside className="w-1/4 bg-[#1C1C1E] rounded-xl p-6 flex flex-col items-center">
+        <aside className="w-full md:w-1/4 bg-[#1C1C1E] rounded-3xl  mt-15 p-6 flex flex-col items-center">
           <div className="flex flex-col items-center text-center">
             <div className="w-24 h-24 bg-gray-600 rounded-full mb-2"></div>
             <p className="text-sm text-gray-400">Unverified</p>
@@ -676,18 +730,22 @@ export default function Profile() {
           </div>
 
           <div className="flex w-full justify-around my-8">
-            {/* Withdrawal Record - Normal color always */}
+            {/* Withdrawal Record - UPDATED: Now triggers password modal */}
             <button
-              onClick={() => handleTabChange("withdrawal")}
-              className="flex flex-col items-center gap-2 text-gray-300 hover:text-white transition-colors"
+              onClick={() => handleRestrictedAccess('withdrawal-record')}
+              className={`flex flex-col items-center gap-2 transition-colors ${
+                activeTab === "withdrawal-record"
+                  ? "text-[#E83A78]"
+                  : "text-gray-300 hover:text-white"
+              }`}
             >
               <FiDollarSign size={24} />
-              <span>Withdrawal Record</span>
+              <span className="text-xs md:text-base">Withdrawal Record</span>
             </button>
 
-            {/* Withdrawal - Pink color ONLY when form is open */}
+            {/* Withdrawal - UPDATED: Now triggers password modal */}
             <button
-              onClick={handleWithdrawalClick}
+              onClick={() => handleRestrictedAccess('withdrawal')}
               className={`flex flex-col items-center gap-2 transition-colors ${
                 activeTab === "withdrawal"
                   ? "text-[#E83A78]"
@@ -695,7 +753,7 @@ export default function Profile() {
               }`}
             >
               <FiCreditCard size={24} />
-              <span>Withdrawal</span>
+              <span className="text-xs md:text-base">Withdrawal</span>
             </button>
           </div>
 
@@ -735,7 +793,7 @@ export default function Profile() {
         </aside>
 
         {/* Right Content */}
-        <main className="w-3/4 bg-[#1C1C1E] rounded-xl p-8">
+        <main className="w-full md:w-3/4 bg-[#1C1C1E] rounded-3xl p-4 mt-15 md:p-8">
           {renderContent()}
         </main>
       </div>

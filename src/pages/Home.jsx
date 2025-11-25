@@ -211,7 +211,7 @@ function InsightsSection() {
             Insights & Events
           </h2>
 
-          <div className="flex gap-8 mt-6 translate-y-12 md:mt-0 items-center">
+          <div className="flex gap-8 mt-6 mb-10 translate-y-12 md:mt-0 items-center">
             {[0, 1, 2].map((i) => (
               <button
                 key={i}
@@ -228,7 +228,7 @@ function InsightsSection() {
                 />
 
                 {/* Always Black Dot */}
-                <span className="relative block w-4 h-4 bg-black rounded-full" />
+                <span className="relative block  w-4 h-4 bg-black rounded-full" />
               </button>
             ))}
           </div>
@@ -350,14 +350,14 @@ export default function Home() {
         <div className="relative z-10 max-w-6xl mx-auto px-4 lg:px-8 pt-20 lg:pt-32">
           {/* WE ARE REFLECT DIGITAL - Updated positioning and styling */}
           <div className=" mb-30  lg:mb-8">
-            <p className="text-sm sm:text-base  lg:text-lg font-bold lg:-translate-x-90 lg:-translate-y-20 text-white mb-2  lg:text-left">
+            <p className="text-sm sm:text-base  lg:text-lg font-bold lg:-translate-x-90 lg:-translate-y-20 text-white mb-2 -translate-x-10 lg:text-left">
               WE ARE REFLECT DIGITAL
             </p>
           </div>
 
           {/* Main Heading */}
           <div className=" lg:text-left mb-8 lg:mb-12">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl font-black lg:-translate-x-90 lg:-translate-y-20 leading-none tracking-tight text-white uppercase">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-6xl font-black lg:-translate-x-90 lg:-translate-y-10 -translate-y-15 -translate-x-10 leading-none tracking-tight text-white uppercase">
               UNLEASH
               <br />
               YOUR DIGITAL
@@ -368,7 +368,7 @@ export default function Home() {
 
           {/* OUR WORK Button - Updated positioning */}
           <div className=" lg:text-left">
-            <button className="border-2 border-white text-white px-8 sm:px-10 py-3 sm:py-4 lg:-translate-x-90 lg:translate-y-14 rounded-full font-bold text-sm sm:text-base tracking-widest hover:bg-white hover:text-[#fc1974] transition-all duration-300 transform hover:scale-105">
+            <button className="border-2 border-white text-white px-8 sm:px-10 py-3 sm:py-4 lg:-translate-x-90 lg:translate-y-14 rounded-full font-bold text-sm sm:text-base tracking-widest hover:bg-white -translate-x-10 hover:text-[#fc1974] transition-all duration-300 transform hover:scale-105">
               OUR WORK
             </button>
           </div>
@@ -409,8 +409,8 @@ export default function Home() {
       </section>
 
       {/* Challenges Section */}
-      <section className="w-full bg-[#f0f0f0] py-12  sm:py-16 lg:py-24">
-        <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
+      <section className="w-full bg-[#f0f0f0] py-12   sm:py-16 lg:py-24">
+        <div className="container mx-auto px-15 sm:px-6 max-w-6xl">
           <h1 className="text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-extrabold text-center text-black mb-8 sm:mb-12 lg:mb-16 tracking-wide">
             WHAT ARE YOUR CHALLENGES?
           </h1>

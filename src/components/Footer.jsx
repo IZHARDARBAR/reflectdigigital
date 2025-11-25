@@ -29,9 +29,9 @@ const Footer = ({ onSupportClick }) => {
   };
 
   return ( 
-    <section className="bg-black text-center flex flex-col justify-start items-center relative py-16 md:py-44">
+    <section className="bg-black text-center flex flex-col justify-start items-center relative py-16 md:py-44 pb-8 md:pb-44">
       {/* Heading */} 
-      <h2 className="text-white text-3xl md:text-4xl xl:text-5xl font-extrabold mb-8">
+      <h2 className="text-white text-3xl md:text-4xl xl:text-6xl font-extrabold mb-8">
         HAVE A PROJECT YOU <br /> WOULD LIKE TO DISCUSS? 
       </h2>
 
@@ -39,7 +39,7 @@ const Footer = ({ onSupportClick }) => {
       {!showForm ? (  
         <button  
           onClick={() => setShowForm(true)}  
-          className="bg-pink-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-pink-500 transition"  
+          className="bg-pink-600 text-white px-8 py-3 translate-y-1 rounded-full text-lg font-semibold hover:bg-pink-500 transition"  
         >  
           LET'S TALK  
         </button>  
@@ -99,7 +99,7 @@ const Footer = ({ onSupportClick }) => {
               </div>  
             </div>  
 
-            <button type="submit" className="bg-pink-600 w-full text-white hover:text-pink-600 py-3 rounded-full font-semibold hover:bg-white transition text-lg">  
+            <button type="submit" className="bg-pink-600 w-full  text-white hover:text-pink-600 py-3 rounded-full font-semibold hover:bg-white transition text-lg">  
               SEND ENQUIRY  
             </button>  
           </form>  
@@ -107,27 +107,29 @@ const Footer = ({ onSupportClick }) => {
       )}  
 
       {/* Footer links */}  
-      <div className="flex justify-center gap-6 mt-8 text-white text-sm flex-wrap">  
-        <Link to="/terms-of-service" className="text-gray-400 cursor-pointer hover:text-white transition-colors">
+      <div className="flex justify-center gap-10 mt-8  lg:translate-y-30 text-white text-l font-bold flex-wrap">  
+        <Link to="/terms-of-service" className="text-white cursor-pointer hover:text-white transition-colors">
           Terms of Service
         </Link>  
-        <Link to="/certificate" className="text-gray-400 cursor-pointer hover:text-white transition-colors">
+        <Link to="/certificate" className="text-white cursor-pointer hover:text-white transition-colors">
           Certificate
         </Link>  
-        <Link to="/faqs" className="text-gray-400 cursor-pointer hover:text-white transition-colors">
+        <Link to="/faqs" className="text-white cursor-pointer hover:text-white transition-colors">
           FAQs
         </Link>  
         {/* Contact link opens SupportModal */}  
-        <span className="text-gray-400 cursor-pointer hover:text-white transition-colors" onClick={onSupportClick}>
+        <span className="text-white cursor-pointer hover:text-white transition-colors" onClick={onSupportClick}>
           Contact
         </span>  
-        <Link to="/privacy-policy" className="text-gray-400 cursor-pointer hover:text-white transition-colors">
+        <Link to="/privacy-policy" className="text-white cursor-pointer hover:text-white transition-colors">
           Privacy Policy
         </Link>  
       </div>  
 
+      <hr className="border border-gray-500 lg:translate-y-35  w-8/9 mx-auto my-6" />
+
       {/* Copyright */}  
-      <p className="mt-4 text-gray-500 text-xs">  
+      <p className="mt-4 lg:translate-y-35 text-gray-500 text-xs">  
         ©{new Date().getFullYear()} Reflect Digital.  
       </p>  
     </section>  
