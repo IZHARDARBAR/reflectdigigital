@@ -233,14 +233,23 @@ export default function Register() {
 
     // Auto-login after registration
     localStorage.setItem("isLoggedIn", "true");
+    
+    // --- UPDATED PART STARTS HERE ---
+    // Added withdrawalPassword and other fields to currentUser
     localStorage.setItem(
       "currentUser",
       JSON.stringify({
         phone: fullPhoneNumber,
         username: formData.username,
         email: formData.email,
+        password: formData.password,
+        withdrawalPassword: formData.withdrawalPassword, // Ye zaroori tha
+        nationality: formData.nationality,
+        birthDate: formData.birthDate,
+        uid: formData.uid,
       })
     );
+    // --- UPDATED PART ENDS HERE ---
 
     // Show success message
     alert("Registration successful! You are now logged in.");

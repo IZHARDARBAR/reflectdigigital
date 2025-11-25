@@ -14,11 +14,21 @@ const WithdrawalModal = ({ isOpen, onClose, onVerified }) => {
       return;
     }
 
-    // Get current withdraw password from localStorage
-    const currentWithdrawPassword = localStorage.getItem("withdrawPassword");
+    // --- YAHAN CHANGE KIYA HAI ---
+    // Pehle hum pura user object nikalenge
+    const storedUser = localStorage.getItem("currentUser");
+    
+    if (!storedUser) {
+      alert("User not logged in!");
+      return;
+    }
+
+    const userData = JSON.parse(storedUser);
+    const correctPassword = userData.withdrawalPassword;
+    // -----------------------------
     
     // Verify withdrawal password
-    if (withdrawalPassword !== currentWithdrawPassword) {
+    if (withdrawalPassword !== correctPassword) {
       alert("Invalid withdrawal password");
       return;
     }
@@ -39,7 +49,7 @@ const WithdrawalModal = ({ isOpen, onClose, onVerified }) => {
     <div 
       id="withdrawal-modal-backdrop"
       onClick={handleOutsideClick}
-      className="fixed inset-0 bg-transparent flex justify-center z-50 h-60  mt-35"
+      className="fixed inset-0 bg-transparent flex justify-center z-50 h-60 mt-35"
     >
       <div className="bg-[#212529] rounded-2xl shadow-xl w-full max-w-md p-4 sm:p-8 text-white relative">
         {/* Close Button */}
