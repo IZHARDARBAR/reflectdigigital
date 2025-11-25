@@ -3,7 +3,7 @@ import React from 'react';
 // Har event ke liye card, crown, aur text ka data
 const eventsData = [
   {
-    cardImage: 'event.svg', // Iski jagah ab code se Gradient aayega
+    cardImage: 'event.jpg', // Yeh image ab show hogi
     crownImage: 'goldcrown.png',
     description: ['Deposit $500-$999', 'eligible to enjoy 5% reward bonus'],
     deposit: '$500',
@@ -47,19 +47,14 @@ export default function EventsLayout() {
           {eventsData.map((event, index) => (
             <div key={index} className="relative rounded-3xl overflow-hidden min-h-[300px] flex flex-col justify-center">
               
-              {/* ================= BACKGROUND LOGIC ================= */}
-              {index === 0 ? (
-                // SIRF PEHLE CARD KE LIYE GRADIENT (Screenshot jaisa)
-                <div className="absolute inset-0 bg-gradient-to-br from-[#E83A78] via-[#FF6B6B] to-[#FBA15F] z-0"></div>
-              ) : (
-                // BAAKI CARDS KE LIYE IMAGE
-                <img 
-                  src={event.cardImage} 
-                  alt={`Event Card ${index + 1}`} 
-                  className="absolute inset-0 w-full h-full object-cover z-0" 
-                />
-              )}
-              {/* ================================================== */}
+              {/* ================= UPDATED BACKGROUND LOGIC ================= */}
+              {/* Yahan se purani condition hata di gayi hai. Ab har card apni image show karega */}
+              <img 
+                src={event.cardImage} 
+                alt={`Event Card ${index + 1}`} 
+                className="absolute inset-0 w-full h-full object-cover z-0" 
+              />
+              {/* ========================================================== */}
               
               {/* Crown ki Image (Overlay) */}
               <img
@@ -68,7 +63,7 @@ export default function EventsLayout() {
                 className="absolute -top-4 sm:-top-6 -right-2 sm:-right-4 w-24 sm:w-32 lg:w-40 -translate-x-6 sm:-translate-x-10 translate-y-3 sm:translate-y-5 h-auto z-20" 
               />
 
-              {/* ===== TEXT CONTENT (Relative rakha hai taake height automatically set ho) ===== */}
+              {/* ===== TEXT CONTENT ===== */}
               <div className="relative p-6 sm:p-8 flex flex-col z-10 w-full h-full justify-between">
                 
                 {/* Description */}
@@ -101,7 +96,6 @@ export default function EventsLayout() {
                 </div>
 
               </div>
-              {/* ===================== */}
             </div>
           ))}
 
