@@ -2,33 +2,93 @@ import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import {
-  FaLightbulb,
-  FaLaptop,
-  FaClock,
-  FaChartLine,
-  FaUsers,
-  FaLock,
-  FaChevronRight,
-  FaChevronLeft,
-  FaChevronUp,
+  FaLightbulb, FaLaptop, FaClock, FaChartLine, FaUsers, FaLock,
+  FaChevronRight, FaChevronLeft, FaChevronUp,
 } from "react-icons/fa";
 
-// Add these icon components at the top of your file, after imports
-const LeftChevronIcon = ({ className }) => (
-  <FaChevronLeft className={className} />
-);
+// ==========================================
+// 1. ICONS
+// ==========================================
 
+const LeftChevronIcon = ({ className }) => <FaChevronLeft className={className} />;
 const UpChevronIcon = ({ className }) => <FaChevronUp className={className} />;
 
-const ChevronPatternIcon = ({ className }) => (
-  <div className={className}>
-    <FaChevronRight className="w-6 h-6 lg:w-8 lg:h-8" />
-    <FaChevronRight className="w-6 h-6 lg:w-8 lg:h-8 -ml-3 lg:-ml-4" />
-    <FaChevronRight className="w-6 h-6 lg:w-8 lg:h-8 -ml-3 lg:-ml-4" />
-  </div>
-);
+// ==========================================
+// 2. DATA CONSTANTS
+// ==========================================
 
-// BlogCard Component
+const AWARDS_DATA = [
+  [{ id: 1, src: "/1.png" }, { id: 2, src: "/9.png" }, { id: 3, src: "/4.png" }, { id: 4, src: "/4.png" }],
+  [{ id: 5, src: "/5.png" }, { id: 6, src: "/6.png" }, { id: 7, src: "/10017.png" }, { id: 8, src: "/8.png" }],
+  [{ id: 5, src: "/9.png" }, { id: 6, src: "/10025.png" }, { id: 7, src: "/10.png" }, { id: 8, src: "/12.png" }],
+  [{ id: 5, src: "/10014.png" }, { id: 6, src: "/10015.png" }, { id: 7, src: "/10017.png" }, { id: 8, src: "/10018.png" }],
+  [{ id: 5, src: "/10019.png" }, { id: 6, src: "/10020.png" }, { id: 7, src: "/10022.png" }, { id: 8, src: "/10023.png" }],
+  [{ id: 5, src: "/10024.png" }, { id: 6, src: "/10025.png" }, { id: 7, src: "/10026.png" }, { id: 8, src: "/10028.png" }],
+  [{ id: 5, src: "/1.png" }, { id: 6, src: "/10028.png" }, { id: 7, src: "/4.png" }, { id: 8, src: "/5.png" }],
+  [{ id: 5, src: "/6.png" }, { id: 6, src: "/8.png" }, { id: 7, src: "/9.png" }, { id: 8, src: "/10.png" }],
+  [{ id: 5, src: "/10014.png" }, { id: 6, src: "/12.png" }, { id: 7, src: "/10015.png" }, { id: 8, src: "/10017.png" }],
+  [{ id: 5, src: "/10017.png" }, { id: 6, src: "/10018.png" }, { id: 7, src: "/10019.png" }, { id: 8, src: "/10020.png" }],
+];
+
+const NEXT_LEVEL_POSTS = [
+  { id: 1, imageUrl: "/main1.png", bgImageUrl: "/mainbg1.png", title: "Becky Simms" },
+  { id: 2, imageUrl: "/main2.png", bgImageUrl: "/mainbg2.png", title: "How to Build Impactful Relationships with Journalists" },
+  { id: 3, imageUrl: "/main3.png", bgImageUrl: "/mainbg3.png", title: "My Work Experience Week: Rebecca" },
+  { id: 4, imageUrl: "/main4.png", bgImageUrl: "/mainbg4.png", title: "The Future of SEO: Trends to Watch in 2024" },
+  { id: 5, imageUrl: "/main5.png", bgImageUrl: "/mainbg5.png", title: "Crafting the Perfect Social Media Campaign" },
+  { id: 6, imageUrl: "/main6.png", bgImageUrl: "/mainbg6.png", title: "Data-Driven Marketing: A Practical Guide" },
+  { id: 7, imageUrl: "/main1.png", bgImageUrl: "/mainbg5.png", title: "Email Marketing that Converts" },
+  { id: 8, imageUrl: "/main7.png", bgImageUrl: "/mainbg7.png", title: "Behind the Scenes of Our Latest Event" },
+  { id: 9, imageUrl: "/main8.png", bgImageUrl: "/mainbg8.png", title: "Behind the Scenes of Our Latest Event" },
+];
+
+const TEAM_LEADERS = [
+  { id: 1, imageUrl: "/aboutblog.jpg", authorName: "Founder & CEO", title: "Becky Simms" },
+  { id: 2, imageUrl: "/aboutblog2.jpg", title: "Paul", authorName: "COO" },
+  { id: 3, imageUrl: "/aboutblog3.jpg", authorName: "Head of SEO", title: "Andy Mollison" },
+  { id: 4, imageUrl: "/aboutblog4.jpg", title: "Jonna Earle", authorName: "Head of Content and Digital PR" },
+  { id: 5, imageUrl: "/aboutblog5.jpg", title: "Chantel Jordan", authorName: "Marketing Director" },
+  { id: 6, imageUrl: "/aboutblog6.jpg", title: "Sarah McAreavey", authorName: "People Director" },
+  { id: 7, imageUrl: "/aboutblog7.jpg", title: "Laura Harvey", authorName: "Client Service Director" },
+  { id: 8, imageUrl: "/aboutblog8.jpg", title: "Luttie Namakando", authorName: "Director of Behavioural Science and Inovation" },
+  { id: 9, imageUrl: "/aboutblog5.jpg", title: "Daniyal", authorName: "Director" },
+];
+
+const PARALLAX_ITEMS = [
+  {
+    src: "/aboutparallax1.png",
+    title: "WE'RE A FAMILY.",
+    subtitle: "We're a family, a unit, a place where individuals can give and receive honest, open feedback. Support comes as standard but so does the ability to challenge and it's encouraged. We care for each other, look out for each other but most importantly we push each other to be the best we can be. We're a modern family, anyone fits in provided they can live by this mantra.",
+    buttonText: "JOIN OUR FAMILY",
+  },
+  {
+    src: "/aboutparallax2.png",
+    title: "LOVE OUR CRAFT.",
+    subtitle: "We absolutely love our craft. If we could eat digital strategy on toast for breakfast, we would. We have experts at the top of their game leading teams full of digital mavens pushing to learn and develop at every turn. Our passion for digital spills into everything we do and leads us to put education at the forefront of our work ensuring no-one is ever left behind.",
+    buttonText: "JOIN OUR TEAM",
+  },
+  {
+    src: "/aboutparallax3.png",
+    title: "GOING FOR GOLD.",
+    subtitle: "Like Olympic athletes, we are always going for gold. Our ambition and drive shine through with every step we take, our eyes are always open looking for opportunity in places others miss and we remain curious at all times. Our love of our craft ensures we maintain match fitness consistently by soaking up the latest knowledge and remaining agile and strategic in our approach with data being our most critical currency.",
+    buttonText: "JOIN OUR TEAM",
+  },
+];
+
+const CHALLENGES_DATA = [
+  { id: 1, icon: FaLightbulb, text: "I want a digital partner who understands my audience" },
+  { id: 2, icon: FaLaptop, text: "I'm not getting the right traffic, leads or sales from my website" },
+  { id: 3, icon: FaClock, text: "I need to deliver return on investment" },
+  { id: 4, icon: FaChartLine, text: "I don't understand what marketing is working" },
+  { id: 5, icon: FaUsers, text: "I don't know who my audience is or how to target them" },
+  { id: 6, icon: FaLock, text: "I'm worried about how data and privacy impacts my marketing" },
+];
+
+// ==========================================
+// 3. CARD COMPONENTS (RESTORED)
+// ==========================================
+
+// Used for Team Leaders
 const BlogCard = ({ imageUrl, title, authorName, authorImageUrl }) => (
   <div className="bg-gray-200 h-130 overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group">
     <div className="relative overflow-hidden">
@@ -62,7 +122,61 @@ const BlogCard = ({ imageUrl, title, authorName, authorImageUrl }) => (
   </div>
 );
 
-// ChallengeCard Component
+// Used for Clients Next Level
+const NextLevelCard = ({ imageUrl, bgImageUrl, title }) => {
+  return (
+    <div className="relative bg-white overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group h-96">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center h-90 z-0"
+        style={{ backgroundImage: `url(${bgImageUrl})` }}
+      />
+
+      {/* Main Content Container */}
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Main Image Area - Top Section */}
+        <div className="flex-1 relative p-6 flex items-center justify-center">
+          <div className="relative w-32 lg:mt-10 h-32 sm:w-40 sm:h-40 lg:w-50 lg:h-30 ">
+            <img
+              src={imageUrl}
+              alt={title}
+              className="w-50 object-fill rounded-lg "
+            />
+          </div>
+        </div>
+
+        {/* Gray Area - Bottom Section with Title and Arrow */}
+        <div className="bg-gray-100 h-30 p-6 relative group-hover:bg-gray-200 transition-colors duration-300">
+          <div className="flex justify-between items-center">
+            {/* Title */}
+            <h3 className="text-lg font-semibold text-gray-900 pr-4">
+              {title}
+            </h3>
+
+            {/* Arrow in Right Corner */}
+            <div className="flex-shrink-0 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center group-hover:bg-gray-700 transition-colors duration-300">
+              <svg
+                className="w-4 h-4 text-white transform group-hover:translate-x-1 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Used for Challenges (Kept for reference if needed later)
 const ChallengeCard = ({ challenge }) => {
   const Icon = challenge.icon;
   return (
@@ -77,79 +191,12 @@ const ChallengeCard = ({ challenge }) => {
   );
 };
 
-// RecognizedSection Component
+// ==========================================
+// 4. PAGE SECTIONS
+// ==========================================
+
 const RecognizedSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-
-  // You can add more sets of images here, up to 10
-  const awards = [
-    // Set 1
-    [
-      { id: 1, src: "/1.png", alt: "The Drum Search Awards" },
-      { id: 2, src: "/9.png", alt: "Wirehive 100" },
-      {
-        id: 3,
-        src: "/4.png",
-        alt: "Kent Invicta Chamber of Commerce Business Award 2019",
-      },
-      { id: 4, src: "/4.png", alt: "UK Search Awards 2018 Winner" },
-    ],
-    // Set 2 - Example with different images
-    [
-      { id: 5, src: "/5.png", alt: "Award 5" },
-      { id: 6, src: "/6.png", alt: "Award 6" },
-      { id: 7, src: "/10017.png", alt: "Award 7" },
-      { id: 8, src: "/8.png", alt: "Award 8" },
-    ],
-    [
-      { id: 5, src: "/9.png", alt: "Award 5" },
-      { id: 6, src: "/10025.png", alt: "Award 6" },
-      { id: 7, src: "/10.png", alt: "Award 7" },
-      { id: 8, src: "/12.png", alt: "Award 8" },
-    ],
-    [
-      { id: 5, src: "/10014.png", alt: "Award 5" },
-      { id: 6, src: "/10015.png", alt: "Award 6" },
-      { id: 7, src: "/10017.png", alt: "Award 7" },
-      { id: 8, src: "/10018.png", alt: "Award 8" },
-    ],
-    [
-      { id: 5, src: "/10019.png", alt: "Award 5" },
-      { id: 6, src: "/10020.png", alt: "Award 6" },
-      { id: 7, src: "/10022.png", alt: "Award 7" },
-      { id: 8, src: "/10023.png", alt: "Award 8" },
-    ],
-    [
-      { id: 5, src: "/10024.png", alt: "Award 5" },
-      { id: 6, src: "/10025.png", alt: "Award 6" },
-      { id: 7, src: "/10026.png", alt: "Award 7" },
-      { id: 8, src: "/10028.png", alt: "Award 8" },
-    ],
-    [
-      { id: 5, src: "/1.png", alt: "Award 5" },
-      { id: 6, src: "/10028.png", alt: "Award 6" },
-      { id: 7, src: "/4.png", alt: "Award 7" },
-      { id: 8, src: "/5.png", alt: "Award 8" },
-    ],
-    [
-      { id: 5, src: "/6.png", alt: "Award 5" },
-      { id: 6, src: "/8.png", alt: "Award 6" },
-      { id: 7, src: "/9.png", alt: "Award 7" },
-      { id: 8, src: "/10.png", alt: "Award 8" },
-    ],
-    [
-      { id: 5, src: "/10014.png", alt: "Award 5" },
-      { id: 6, src: "/12.png", alt: "Award 6" },
-      { id: 7, src: "/10015.png", alt: "Award 7" },
-      { id: 8, src: "/10017.png", alt: "Award 8" },
-    ],
-    [
-      { id: 5, src: "/10017.png", alt: "Award 5" },
-      { id: 6, src: "/10018.png", alt: "Award 6" },
-      { id: 7, src: "/10019.png", alt: "Award 7" },
-      { id: 8, src: "/10020.png", alt: "Award 8" },
-    ],
-  ];
 
   return (
     <section className="bg-white py-12 sm:py-16 lg:py-24">
@@ -158,7 +205,7 @@ const RecognizedSection = () => {
           {/* Left Side: Image Grid and Dots */}
           <div className="w-full lg:w-1/2 xl:w-2/5">
             <div className="flex justify-center mb-6">
-              {Array.from({ length: 10 }).map((_, index) => (
+              {Array.from({ length: AWARDS_DATA.length }).map((_, index) => (
                 <button
                   key={index}
                   aria-label={`Go to recognition slide ${index + 1}`}
@@ -175,17 +222,16 @@ const RecognizedSection = () => {
                 </button>
               ))}
             </div>
-            {/* Conditional rendering to handle cases where an image set might not exist */}
-            {awards[activeIndex] ? (
+            {AWARDS_DATA[activeIndex] ? (
               <div className="grid grid-cols-2 gap-4">
-                {awards[activeIndex].map((award) => (
+                {AWARDS_DATA[activeIndex].map((award) => (
                   <div
                     key={award.id}
                     className="bg-gray-100 p-4 flex items-center justify-center aspect-video sm:aspect-square"
                   >
                     <img
                       src={award.src}
-                      alt={award.alt}
+                      alt="Award"
                       className="max-w-full h-auto"
                     />
                   </div>
@@ -203,19 +249,21 @@ const RecognizedSection = () => {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#fc1974] mb-4 uppercase tracking-tighter">
               WE'RE RECOGNISED
             </h2>
-            <p className="text-gray-700 mb-4 text-sm sm:text-base leading-relaxed">
-              We start each digital campaign with the aim of delivering
-              world-class, industry-leading work centred around never-ending
-              improvement.
-            </p>
-            <p className="text-gray-700 mb-4 text-sm sm:text-base leading-relaxed">
-              We are grateful to have worked with amazing clients and achieved
-              meaningful impact for so many businesses along the way.
-            </p>
-            <p className="text-gray-700 mb-6 text-sm sm:text-base leading-relaxed">
-              Winning awards isn't everything but it is great when the hard work
-              and effort of our teams and clients are recognised.
-            </p>
+            <div className="space-y-4 text-gray-700 mb-6 text-sm sm:text-base leading-relaxed">
+              <p>
+                We start each digital campaign with the aim of delivering
+                world-class, industry-leading work centred around never-ending
+                improvement.
+              </p>
+              <p>
+                We are grateful to have worked with amazing clients and achieved
+                meaningful impact for so many businesses along the way.
+              </p>
+              <p>
+                Winning awards isn't everything but it is great when the hard work
+                and effort of our teams and clients are recognised.
+              </p>
+            </div>
             <button className="border-2 border-black rounded-full px-8 py-3 text-black font-semibold hover:bg-[#fc1974] hover:border-[#fc1974] hover:text-white transition-colors duration-300 text-xs sm:text-sm tracking-widest">
               WORK WITH US
             </button>
@@ -226,7 +274,6 @@ const RecognizedSection = () => {
   );
 };
 
-// NextLevelSection Component (NEWLY ADDED)
 const NextLevelSection = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage, setPostsPerPage] = useState(3);
@@ -247,121 +294,10 @@ const NextLevelSection = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const nextLevelPosts = [
-    {
-      id: 1,
-      imageUrl: "/main1.png",
-      bgImageUrl: "/mainbg1.png",
-      title: "Becky Simms",
-    },
-    {
-      id: 2,
-      imageUrl: "/main2.png",
-      bgImageUrl: "/mainbg2.png",
-      title: "How to Build Impactful Relationships with Journalists",
-    },
-    {
-      id: 3,
-      imageUrl: "/main3.png",
-      bgImageUrl: "/mainbg3.png",
-      title: "My Work Experience Week: Rebecca",
-    },
-    {
-      id: 4,
-      imageUrl: "/main4.png",
-      bgImageUrl: "/mainbg4.png",
-      title: "The Future of SEO: Trends to Watch in 2024",
-    },
-    {
-      id: 5,
-      imageUrl: "/main5.png",
-      bgImageUrl: "/mainbg5.png",
-      title: "Crafting the Perfect Social Media Campaign",
-    },
-    {
-      id: 6,
-      imageUrl: "/main6.png",
-      bgImageUrl: "/mainbg6.png",
-      title: "Data-Driven Marketing: A Practical Guide",
-    },
-    {
-      id: 7,
-      imageUrl: "/main1.png",
-      bgImageUrl: "/mainbg5.png",
-      title: "Email Marketing that Converts",
-    },
-    {
-      id: 8,
-      imageUrl: "/main7.png",
-      bgImageUrl: "/mainbg7.png",
-      title: "Behind the Scenes of Our Latest Event",
-    },
-    {
-      id: 9,
-      imageUrl: "/main8.png",
-      bgImageUrl: "/mainbg8.png",
-      title: "Behind the Scenes of Our Latest Event",
-    },
-  ];
-
-  const totalPages = Math.ceil(nextLevelPosts.length / postsPerPage);
+  const totalPages = Math.ceil(NEXT_LEVEL_POSTS.length / postsPerPage);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-  };
-
-  // Simplified BlogCard Component
-  const BlogCard = ({ imageUrl, bgImageUrl, title }) => {
-    return (
-      <div className="relative bg-white  overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group h-96">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center h-90 z-0"
-          style={{ backgroundImage: `url(${bgImageUrl})` }}
-        />
-
-        {/* Main Content Container */}
-        <div className="relative z-10 h-full flex flex-col">
-          {/* Main Image Area - Top Section */}
-          <div className="flex-1 relative p-6 flex items-center justify-center">
-            <div className="relative w-32 lg:mt-10 h-32 sm:w-40 sm:h-40 lg:w-50 lg:h-30 ">
-              <img
-                src={imageUrl}
-                alt={title}
-                className="w-50 object-fill rounded-lg "
-              />
-            </div>
-          </div>
-
-          {/* Gray Area - Bottom Section with Title and Arrow */}
-          <div className="bg-gray-100 h-30 p-6 relative group-hover:bg-gray-200 transition-colors duration-300">
-            <div className="flex justify-between items-center">
-              {/* Title */}
-              <h3 className="text-lg font-semibold text-gray-900 pr-4">
-                {title}
-              </h3>
-
-              {/* Arrow in Right Corner */}
-              <div className="flex-shrink-0 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center group-hover:bg-gray-700 transition-colors duration-300">
-                <svg
-                  className="w-4 h-4 text-white transform group-hover:translate-x-1 transition-transform duration-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -372,7 +308,6 @@ const NextLevelSection = () => {
             CLIENTS WE'VE TAKEN TO <br /> THE NEXT LEVEL
           </h2>
 
-          {/* Dots on the right side - Only show if more than 1 page */}
           {totalPages > 1 && (
             <div className="flex space-x-3">
               {Array.from({ length: totalPages }).map((_, index) => (
@@ -399,13 +334,13 @@ const NextLevelSection = () => {
             {Array.from({ length: totalPages }).map((_, pageIndex) => (
               <div key={pageIndex} className="w-full flex-shrink-0">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 p-1">
-                  {nextLevelPosts
+                  {NEXT_LEVEL_POSTS
                     .slice(
                       pageIndex * postsPerPage,
                       (pageIndex + 1) * postsPerPage
                     )
                     .map((post) => (
-                      <BlogCard
+                      <NextLevelCard
                         key={post.id}
                         imageUrl={post.imageUrl}
                         bgImageUrl={post.bgImageUrl}
@@ -422,11 +357,9 @@ const NextLevelSection = () => {
   );
 };
 
-// join our team section
 const JoinOurTeamSection = () => {
   return (
-    <div className=" font-sans py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Optional background pattern */}
+    <div className="font-sans py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="absolute inset-0 opacity-5">
         <div
           className="absolute inset-0"
@@ -438,24 +371,17 @@ const JoinOurTeamSection = () => {
       </div>
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
-        {/* Main Heading with gradient text */}
         <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-6xl font-black text-white uppercase tracking-tighter leading-tight mb-4">
           FANCY JOINING OUR TEAM?
         </h2>
-
-        {/* Sub Heading */}
         <h3 className="text-3xl sm:text-4xl lg:text-6xl font-black text-white uppercase tracking-tighter mb-8">
           WE'RE HIRING!
         </h3>
-
-        {/* Description Text */}
         <p className="text-xl sm:text-2xl text-white leading-relaxed mb-12 max-w-3xl mx-auto font-medium">
           We are always interested in hearing from talented individuals who love
           digital so if you are looking for a new challenge get in contact and
           send us your CV.
         </p>
-
-        {/* Get in Touch Button with hover effect */}
         <button className="bg-[#fc1974] rounded-full hover:bg-white hover:text-[#fc1974] text-white font-bold py-5 px-12 sm:py-6 sm:px-16 text-xl sm:text-2xl uppercase tracking-widest transition-all duration-300 transform hover:scale-105  hover:shadow-xl">
           GET IN TOUCH
         </button>
@@ -464,7 +390,6 @@ const JoinOurTeamSection = () => {
   );
 };
 
-//Hopes grove section
 const HopesGroveSection = () => {
   return (
     <div
@@ -475,11 +400,8 @@ const HopesGroveSection = () => {
         backgroundPosition: "center",
       }}
     >
-      {/* Dark overlay so text stays readable */}
       <div className="absolute inset-0 bg-black/60"></div>
-
       <div className="max-w-4xl mx-auto text-center relative z-10">
-        {/* Description */}
         <p className="text-xl sm:text-lg text-white leading-relaxed mb-12 max-w-full mx-auto font-medium">
           "WE HAVE BEEN BLOWN AWAY WITH THE SUCCESS OF THIS CAMPAIGN,AND REFLECT
           DIGITAL'S DEDICATION TO MANAGING OUR DIGITAL. RESULTS HAVE BEEN
@@ -492,7 +414,6 @@ const HopesGroveSection = () => {
         <p className="font-bold mb-10">
           Morris Hankison | Managing Director at Hope Grove Nurseries
         </p>
-        {/* Logo */}
         <img
           src="/grovelogo.png"
           alt="Company Logo"
@@ -503,95 +424,7 @@ const HopesGroveSection = () => {
   );
 };
 
-// Challenge data
-const challengesData = [
-  {
-    id: 1,
-    icon: FaLightbulb,
-    text: "I want a digital partner who understands my audience",
-  },
-  {
-    id: 2,
-    icon: FaLaptop,
-    text: "I'm not getting the right traffic, leads or sales from my website",
-  },
-  { id: 3, icon: FaClock, text: "I need to deliver return on investment" },
-  {
-    id: 4,
-    icon: FaChartLine,
-    text: "I don't understand what marketing is working",
-  },
-  {
-    id: 5,
-    icon: FaUsers,
-    text: "I don't know who my audience is or how to target them",
-  },
-  {
-    id: 6,
-    icon: FaLock,
-    text: "I'm worried about how data and privacy impacts my marketing",
-  },
-];
-
-// Blog posts data
-const blogPosts = [
-  {
-    id: 1,
-    imageUrl: "/aboutblog.jpg",
-    authorName: "Founder & CEO",
-    title: "Becky Simms",
-  },
-  {
-    id: 2,
-    imageUrl: "/aboutblog2.jpg",
-    title: "Paul",
-    authorName: "COO",
-  },
-  {
-    id: 3,
-    imageUrl: "/aboutblog3.jpg",
-    authorName: "Head of SEO",
-    title: "Andy Mollison",
-  },
-  {
-    id: 4,
-    imageUrl: "/aboutblog4.jpg",
-    title: "Jonna Earle",
-    authorName: "Head of Content and Digital PR",
-  },
-  {
-    id: 5,
-    imageUrl: "/aboutblog5.jpg",
-    title: "Chantel Jordan",
-    authorName: "Marketing Director",
-  },
-  {
-    id: 6,
-    imageUrl: "/aboutblog6.jpg",
-    title: "Sarah McAreavey",
-    authorName: "People Director",
-  },
-  {
-    id: 7,
-    imageUrl: "/aboutblog7.jpg",
-    title: "Laura Harvey",
-    authorName: "Client Service Director",
-  },
-  {
-    id: 8,
-    imageUrl: "/aboutblog8.jpg",
-    title: "Luttie Namakando",
-    authorName: "Director of Behavioural Science and Inovation",
-  },
-  {
-    id: 9,
-    imageUrl: "/aboutblog5.jpg",
-    title: "Daniyal",
-    authorName: "Director",
-  },
-];
-
-// InsightsSection Component
+// Insights Section (Team Leaders)
 function InsightsSection() {
   const [currentPage, setCurrentPage] = useState(0);
   const [postsPerPage, setPostsPerPage] = useState(3);
@@ -612,7 +445,7 @@ function InsightsSection() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const totalPages = Math.ceil(blogPosts.length / postsPerPage);
+  const totalPages = Math.ceil(TEAM_LEADERS.length / postsPerPage);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -664,7 +497,7 @@ function InsightsSection() {
             {Array.from({ length: totalPages }).map((_, pageIndex) => (
               <div key={pageIndex} className="w-full flex-shrink-0">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 p-1">
-                  {blogPosts
+                  {TEAM_LEADERS
                     .slice(
                       pageIndex * postsPerPage,
                       (pageIndex + 1) * postsPerPage
@@ -686,6 +519,10 @@ function InsightsSection() {
     </div>
   );
 }
+
+// ==========================================
+// 5. MAIN COMPONENT (HOME)
+// ==========================================
 
 export default function Home() {
   const [offsetY, setOffsetY] = useState(0);
@@ -749,7 +586,6 @@ export default function Home() {
                 performance
               </h2>
               <div className="mt-4 sm:mt-8 space-y-3 sm:space-y-6">
-                {/* Paragraphs */}
                 <p className="text-black leading-relaxed text-sm sm:text-base">
                   Reflect Digital is a performance marketing agency specialising
                   in combining behavioural science with the art of marketing.
@@ -871,29 +707,7 @@ export default function Home() {
 
       {/* Parallax Scroll Image Section */}
       <section className="relative">
-        {[
-          {
-            src: "/aboutparallax1.png",
-            title: "WE'RE A FAMILY.",
-            subtitle:
-              "We're a family, a unit, a place where individuals can give and receive honest, open feedback. Support comes as standard but so does the ability to challenge and it's encouraged. We care for each other, look out for each other but most importantly we push each other to be the best we can be. We're a modern family, anyone fits in provided they can live by this mantra.",
-            buttonText: "JOIN OUR FAMILY",
-          },
-          {
-            src: "/aboutparallax2.png",
-            title: "LOVE OUR CRAFT.",
-            subtitle:
-              "We absolutely love our craft. If we could eat digital strategy on toast for breakfast, we would. We have experts at the top of their game leading teams full of digital mavens pushing to learn and develop at every turn. Our passion for digital spills into everything we do and leads us to put education at the forefront of our work ensuring no-one is ever left behind.",
-            buttonText: "JOIN OUR TEAM",
-          },
-          {
-            src: "/aboutparallax3.png",
-            title: "GOING FOR GOLD.",
-            subtitle:
-              "Like Olympic athletes, we are always going for gold. Our ambition and drive shine through with every step we take, our eyes are always open looking for opportunity in places others miss and we remain curious at all times. Our love of our craft ensures we maintain match fitness consistently by soaking up the latest knowledge and remaining agile and strategic in our approach with data being our most critical currency.",
-            buttonText: "JOIN OUR TEAM",
-          },
-        ].map((item, index) => (
+        {PARALLAX_ITEMS.map((item, index) => (
           <div
             key={index}
             className="h-screen flex items-center justify-center bg-cover bg-center bg-fixed relative"

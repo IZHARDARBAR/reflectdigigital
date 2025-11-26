@@ -1,9 +1,9 @@
 import React from 'react';
 
-// Har event ke liye card, crown, aur text ka data
+// event  card, crown, and text  data
 const eventsData = [
   {
-    cardImage: 'event.jpg', // Yeh image ab show hogi
+    cardImage: 'event.jpg', 
     crownImage: 'goldcrown.png',
     description: ['Deposit $500-$999', 'eligible to enjoy 5% reward bonus'],
     deposit: '$500',
@@ -48,7 +48,7 @@ export default function EventsLayout() {
             <div key={index} className="relative rounded-3xl overflow-hidden min-h-[300px] flex flex-col justify-center">
               
               {/* ================= UPDATED BACKGROUND LOGIC ================= */}
-              {/* Yahan se purani condition hata di gayi hai. Ab har card apni image show karega */}
+              
               <img 
                 src={event.cardImage} 
                 alt={`Event Card ${index + 1}`} 
@@ -56,7 +56,7 @@ export default function EventsLayout() {
               />
               {/* ========================================================== */}
               
-              {/* Crown ki Image (Overlay) */}
+              {/* Crown  Image (Overlay) */}
               <img
                 src={event.crownImage}
                 alt={`Crown ${index + 1}`}
