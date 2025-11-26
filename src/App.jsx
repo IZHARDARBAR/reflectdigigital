@@ -10,6 +10,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import SupportModal from "./components/SupportModal";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import AdminPanel from "./components/AdminPanel";
 import Events from "./pages/Events";
 import Rewards from "./pages/Rewards";
 import Profile from "./pages/Profile";
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin" element={<AdminPanel />} />
         {/* New routes added */}
         <Route path="/events" element={<Events />} />
         <Route path="/rewards" element={<Rewards />} />
